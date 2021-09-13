@@ -8,6 +8,14 @@ class BestBooks extends React.Component {
     }
   }
 
+
+  componentDidMount = () => {
+    axios.get(`${process.env.REACT_APP_API_URL}/books`).then((bestBooksRes) => {
+
+        this.setState({ books: bestBooksRes.data });
+    }).catch(error => alert(error.message));
+}
+
   /* TODO: Make a GET request to your API to fetch books for the logged in user  */
 
   render() {
@@ -16,13 +24,36 @@ class BestBooks extends React.Component {
 
     return (
       <>
-        <h2>My Essential Lifelong Learning &amp; Formation Shelf</h2>
-
-        {this.state.books.length ? (
-          <p>Book Carousel coming soon</p>
-        ) : (
-          <h3>No Books Found :(</h3>
-        )}
+         <div>
+                {
+                    this.state.books.length > 0 &&
+                    <>
+                        {
+                            this.state.books.map(book => {
+                                return (
+                                    <>
+                                        <Card style={{ width: '18rem' }}>
+                                            <Card.Body>
+                                                <Card.Title>{book.title}</Card.Title>
+                                                <Card.Text>
+                                                    {book.description}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    {book.status}
+                                                </Card.Text>
+                                                <Card.Text>
+                                                    {book.email}
+                                                </Card.Text>
+                                            </Card.Body>
+                                        </Card>
+                                    </>
+                                )
+                            })
+                        }
+                    </>
+                }
+            </div>
+        )
       </>
     )
   }
