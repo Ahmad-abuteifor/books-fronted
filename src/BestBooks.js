@@ -4,6 +4,7 @@ import { Carousel } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import AddBooks from './components/addbook';
+import UpdateBook from './components/UpdateBooks';
 
 class BestBooks extends React.Component {
     constructor(props) {
@@ -11,11 +12,10 @@ class BestBooks extends React.Component {
         this.state = {
             books: [],
             showAddModal: false,
-
+            showUpdateModal: false,
+            previousBooksData: {}
         }
     }
-
-
 
     handelAddModal = (e) => {
         e.preventDefault();
@@ -26,8 +26,6 @@ class BestBooks extends React.Component {
             description: e.target.bookdescription.value,
             status: e.target.bookstatus.value,
             email: e.target.bookemail.value,
-
-
         }
 
 
@@ -37,24 +35,55 @@ class BestBooks extends React.Component {
         }).catch(() => alert("Something went wrong!"));
     }
 
+    handelUpdateModal = (e) => {
+        e.preventDefault();
+        const reqBody = {
+            title: e.target.bookTitle.value,
+            description: e.target.bookdescription.value,
+            status: e.target.bookstatus.value,
+            email: e.target.bookemail.value,
+        }
+        axios.put(`${process.env.REACT_APP_API_URL}/books/${this.state.previousBooksData._id}`, reqBody).then(updatedBooksObject => {
 
-    handelDeleteCat = (bookId) => {
+            const updateBookArr = this.state.books.map(theBook => {
 
-      
-    
+                if (theBook._id === this.state.previousBooksData._id) {
+                    theBook = updatedBooksObject.data
+                    return theBook;
+                }
+                return theBook;
+            });
+            this.setState({
+                books: updateBookArr,
+                previousBooksData: {}
+            })
+            this.handelDisplayUpdateModal();
+
+        }).catch(() => alert("Something went wrong!"));
+    }
+
+    handelDeleteBook = (bookId) => {
+
+
+
         axios.delete(`${process.env.REACT_APP_API_URL}/books/${bookId}`).then(deleteResponse => {
-          if (deleteResponse.data.deletedCount === 1) {
-            const newBookArray = this.state.books.filter(book => book._id !== bookId);
-            
-            this.setState({ books: newBookArray });
-          }
+            if (deleteResponse.data.deletedCount === 1) {
+                const newBookArray = this.state.books.filter(book => book._id !== bookId);
+
+                this.setState({ books: newBookArray });
+            }
         }).catch(() => alert("something went wrong"));
-      }
-
-
+    }
 
     handelDisplayAddModal = () => {
         this.setState({ showAddModal: !this.state.showAddModal });
+    }
+
+    handelDisplayUpdateModal = (bookObj) => {
+        this.setState({
+            showUpdateModal: !this.state.showUpdateModal,
+            previousBooksData: bookObj
+        });
     }
 
     componentDidMount = () => {
@@ -63,21 +92,14 @@ class BestBooks extends React.Component {
             this.setState({ books: bestBooksRes.data });
         }).catch(error => alert(error.message));
     }
-    /* TODO: Make a GET request to your API to fetch books for the logged in user  */
 
     render() {
-
-        /* TODO: render user's books in a Carousel */
         console.log(this.state.books);
-
         return (
-
             <>
                 <Button onClick={this.handelDisplayAddModal}>
-
                     creat a new book
                 </Button>
-
                 {this.state.showAddModal &&
                     <>
                         <AddBooks
@@ -86,22 +108,24 @@ class BestBooks extends React.Component {
                             handelDisplayAddModal={this.handelDisplayAddModal}
                         />
                     </>
-
-
                 }
-
-
-
+                {
+                    this.state.showUpdateModal &&
+                    <>
+                        <UpdateBook
+                            show={this.state.showUpdateModal}
+                            handelUpdateModal={this.handelUpdateModal}
+                            handelDisplayUpdateModal={this.handelDisplayUpdateModal}
+                            previousBooksData={this.state.previousBooksData}
+                        />
+                    </>
+                }
                 <div>
                     {
                         this.state.books.length > 0 &&
                         <>
-
-
                             <>
-
                                 <Carousel>
-
                                     {
                                         this.state.books.map(book => {
                                             return (<Carousel.Item>
@@ -110,7 +134,6 @@ class BestBooks extends React.Component {
                                                     src="http://trumpwallpapers.com/wp-content/uploads/Book-Wallpaper-03-3840-x-2400.jpg"
                                                     alt={book.title}
                                                 />
-
                                                 <Carousel.Caption>
                                                     <h3> {book.title}
                                                     </h3>
@@ -119,23 +142,19 @@ class BestBooks extends React.Component {
                                                     <p> statuse: {book.status} <br></br>
                                                         Email address:  {book.email}
                                                     </p>
-                                                    <Button variant="danger" onClick={() => this.handelDeleteCat(book._id)}>delete book</Button>
+                                                    <Button variant="danger" onClick={() => this.handelDeleteBook(book._id)}>delete book</Button>
+                                                    <Button variant="warning" onClick={() => this.handelDisplayUpdateModal(book)}>Update Book</Button>
 
                                                 </Carousel.Caption>
                                             </Carousel.Item>
-
                                             )
-
                                         })
                                     }
                                 </Carousel>
                             </>
-
-
                         </>
                     }
                 </div>
-
             </>
         )
     }
