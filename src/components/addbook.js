@@ -16,19 +16,19 @@ export class AddBooks extends Component {
           <Form onSubmit={this.props.handelAddModal}>
             <Form.Group className="mb-3">
               <Form.Label>Book title </Form.Label>
-              <Form.Control type="text" name="bookTitle" placeholder="Enter Cat Name" />
+              <Form.Control type="text" name="bookTitle" placeholder="Enter book Name" />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>BOOK Discrepisein </Form.Label>
-              <Form.Control type="text" name="bookdescription" placeholder="Enter Cat Breed" />
+              <Form.Control type="text" name="bookdescription" placeholder="Enter book Breed" />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>BOOK STATUS</Form.Label>
-              <Form.Control type="text" name="bookstatus" placeholder="Enter Cat Image" />
+              <Form.Control type="text" name="bookstatus" placeholder="Enter book Image" />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>YOUR EMILE!</Form.Label>
-              <Form.Control type="text" name="bookemail" placeholder="Enter Cat Image" />
+              <Form.Control type="text" name="bookemail" placeholder="Enter book Image" />
             </Form.Group>
 
             <Button variant="primary" type="submit">
