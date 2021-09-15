@@ -1,10 +1,11 @@
 import React from 'react';
-// import Carousel from 'react-bootstrap/Carousel'
+
 import { Carousel } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import AddBooks from './components/addbook';
 import UpdateBook from './components/UpdateBooks';
+import { withAuth0 } from '@auth0/auth0-react';
 
 class BestBooks extends React.Component {
     constructor(props) {
@@ -25,7 +26,7 @@ class BestBooks extends React.Component {
             title: e.target.bookTitle.value,
             description: e.target.bookdescription.value,
             status: e.target.bookstatus.value,
-            email: e.target.bookemail.value,
+            email:this.props.auth0.user.email
         }
 
 
@@ -41,7 +42,7 @@ class BestBooks extends React.Component {
             title: e.target.bookTitle.value,
             description: e.target.bookdescription.value,
             status: e.target.bookstatus.value,
-            email: e.target.bookemail.value,
+            email:this.props.auth0.user.email
         }
         axios.put(`${process.env.REACT_APP_API_URL}/books/${this.state.previousBooksData._id}`, reqBody).then(updatedBooksObject => {
 
@@ -160,4 +161,5 @@ class BestBooks extends React.Component {
     }
 }
 
-export default BestBooks;
+// export default BestBooks;
+export default withAuth0(BestBooks);
